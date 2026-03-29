@@ -55,4 +55,4 @@ mvn clean install
 
 If you use Cassowary in your research, please cite the below paper:
 
-* Kathiravelu, P., Sharifi, L. and Veiga, L., 2015, December. Cassowary: Middleware platform for context-aware smart buildings with software-defined sensor networks. In Proceedings of the 2nd Workshop on Middleware for Context-Aware Applications in the IoT (pp. 1-6).
+* Kathiravelu, P., Sharifi, L. and Veiga, L., 2015, December. **Cassowary: Middleware platform for context-aware smart buildings with software-defined sensor networks.** In Proceedings of the 2nd Workshop on Middleware for Context-Aware Applications in the IoT (pp. 1-6).
