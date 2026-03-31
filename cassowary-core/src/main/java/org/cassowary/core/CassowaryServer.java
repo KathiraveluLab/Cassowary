@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CassowaryServer {
     private static final Logger logger = LoggerFactory.getLogger(CassowaryServer.class);
@@ -28,7 +30,16 @@ public class CassowaryServer {
 
     public CassowaryServer(String brokerUrl, String sdnUrl) throws Exception {
         this.grid = new InfinispanGrid();
-        this.publisher = new Publisher(brokerUrl);
+        
+        Publisher tempPublisher = null;
+        try {
+            tempPublisher = new Publisher(brokerUrl);
+        } catch (Exception e) {
+            System.err.println("Note: AMQP Broker not reachable. Simulation will continue in decoupled mode.");
+            logger.warn("Could not connect to AMQP broker at {}. Continuing without publisher.", brokerUrl);
+        }
+        this.publisher = tempPublisher;
+        
         this.sdn = new SdnControllerClient(sdnUrl);
         this.store = new ConfigDataStore(grid);
         this.policyEngine = new CassowaryPolicy();
@@ -52,7 +63,11 @@ public class CassowaryServer {
         dataListener.onDataChanged(averagedData);
         
         // Trigger actuation calculation
-        calculateAndActuate(averagedData);
+        try {
+            calculateAndActuate(averagedData);
+        } catch (Exception e) {
+            logger.error("Error during calculation/actuation", e);
+        }
     }
 
     private void calculateAndActuate(ContextData data) throws Exception {
@@ -65,33 +80,40 @@ public class CassowaryServer {
             store.saveProfile(currentBuilding, p1);
         }
         
+        // Prepare context for policy calculation
+        Map<String, Double> context = new HashMap<>();
+        
         // Get natural light Ls if calculating illumination
         if ("light".equalsIgnoreCase(data.getType())) {
-            Double Ls = contextHistory.getAverage("sensor_light_external");
+            Double Ls = contextHistory.getAverage("light_external"); // Get external context
             if (Ls == null) Ls = 50.0; // fallback per paper
-            data.setValue(Ls); // Pass Ls as additional context in a real implementation
+            context.put("Ls", Ls);
         }
 
         Double targetValue = policyEngine.calculate(data.getType(), 
-            Collections.singletonList(p1), Collections.singletonList(data.getValue()));
+            Collections.singletonList(p1), Collections.singletonList(data.getValue()), context);
             
         logger.info("Calculated target for {}: {} (Averaged)", data.getType(), targetValue);
         
         // Publish actuation command
-        try {
-            publisher.publish("SET " + data.getType() + " TO " + targetValue);
-        } catch (Exception e) {
-            logger.error("Error publishing actuation", e);
+        if (publisher != null) {
+            try {
+                publisher.publish("SET " + data.getType() + " TO " + targetValue);
+            } catch (Exception e) {
+                logger.error("Error publishing actuation", e);
+            }
+        } else {
+            logger.debug("Publisher not available. Skipping AMQP publish for {}", data.getType());
         }
     }
 
     public void stop() throws Exception {
-        publisher.close();
+        if (publisher != null) publisher.close();
         grid.stop();
     }
 
     public static void main(String[] args) throws Exception {
-        CassowaryServer server = new CassowaryServer("tcp://localhost:61616", "http://localhost:8181");
+        CassowaryServer server = new CassowaryServer("amqp://localhost:5672", "http://localhost:8181");
         server.start();
     }
 }

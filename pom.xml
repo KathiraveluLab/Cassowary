@@ -45,6 +45,11 @@
             </dependency>
             <dependency>
                 <groupId>org.cassowary</groupId>
+                <artifactId>cassowary-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cassowary</groupId>
                 <artifactId>cassowary-appliance</artifactId>
                 <version>${project.version}</version>
             </dependency>

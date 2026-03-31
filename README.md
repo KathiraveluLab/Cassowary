@@ -14,42 +14,38 @@ Implementation of the Cassowary middleware for Context-Aware Smart Buildings wit
 
 - Java 17+ (Project built for Java 17)
 - Maven 3.6+
-- ActiveMQ (running on `localhost:61616`) or any AMQP 1.0 broker.
+- Docker & Docker Compose (for running ActiveMQ)
 
 ## Dependency Setup
 
-### 1. OpenDaylight (ODL) Central Controller
-The paper refers to ODL (Beryllium/Lithium). To run with a modern ODL (e.g., Chlorine):
-1. Download ODL: `wget https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/karaf/0.17.3/karaf-0.17.3.tar.gz`
+### 1. ActiveMQ Broker (AMQP)
+To run the pub/sub messaging layer, start the broker using Docker:
+```bash
+docker compose up -d
+```
+The broker will be available at `amqp://localhost:5672`.
+
+### 2. OpenDaylight (ODL) Central Controller
+The project uses RESTCONF to interact with ODL. To run with a modern ODL (e.g., Chlorine):
+1. Download [ODL Karaf](https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/karaf/0.17.3/karaf-0.17.3.tar.gz).
 2. Extract and run: `./bin/karaf`
 3. Install base features: `feature:install odl-restconf odl-mdsal-all`
 
-### 2. Messaging4Transport Bundle
-1. Clone the repo: `git clone https://github.com/KathiraveluLab/Messaging4Transport.git`
-2. Build the project: `mvn clean install -DskipTests`
-3. Load the feature in ODL:
-   ```bash
-   repo-add mvn:org.opendaylight.messaging4transport/messaging4transport-features/1.0.0-SNAPSHOT/xml/features
-   feature:install odl-messaging4transport-impl
-   ```
+## Context-Aware Policy Engine
+The middleware implements a context-aware policy engine that handles jitter and external environment factors (e.g., natural light intensity `Ls`). It dynamically calculates comfort and energy efficiency targets based on tenant profiles.
 
-## How to Build Cassowary
+## How to Build & Run
 
+### 1. Build the project
 ```bash
-mvn clean install
+mvn clean install -DskipTests
 ```
 
-## How to Run
-
-1. Start ActiveMQ.
-2. Run the `CassowaryServer`:
-   ```bash
-   mvn -pl cassowary-core exec:java -Dexec.mainClass="org.cassowary.core.CassowaryServer"
-   ```
-3. Run the `BuildingSimulation`:
-   ```bash
-   mvn -pl cassowary-sim exec:java -Dexec.mainClass="org.cassowary.sim.BuildingSimulation"
-   ```
+### 2. Run the `BuildingSimulation`
+The simulation demonstrates Scenarios 1 and 2 from the research paper, covering tenant proximity and automatic actuation:
+```bash
+mvn -pl cassowary-sim exec:java -Dexec.mainClass="org.cassowary.sim.BuildingSimulation"
+```
 
 ## Citing Cassowary
 

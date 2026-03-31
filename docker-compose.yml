@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  activemq:
+    image: apache/activemq-classic:latest
+    container_name: cassowary-broker
+    ports:
+      - "61616:61616"  # OpenWire
+      - "5672:5672"    # AMQP
+      - "8161:8161"    # Web Console
+    environment:
+      - ACTIVEMQ_ADMIN_USER=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    networks:
+      - cassowary-network
+
+networks:
+  cassowary-network:
+    driver: bridge

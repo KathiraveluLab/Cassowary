@@ -3,15 +3,17 @@ package org.cassowary.common.policy;
 import org.cassowary.common.model.Policy;
 import org.cassowary.common.model.Profile;
 import java.util.List;
+import java.util.Map;
 
 public class CassowaryPolicy implements Policy {
 
     @Override
-    public Double calculate(String property, List<Profile> profiles, List<Double> distances) {
+    public Double calculate(String property, List<Profile> profiles, List<Double> distances, Map<String, Double> context) {
         if ("temperature".equalsIgnoreCase(property)) {
             return calculateTemperature(profiles, distances);
         } else if ("light".equalsIgnoreCase(property)) {
-            return calculateIllumination(distances, 50.0); // 50.0 is dummy Ls (natural light)
+            Double Ls = context != null ? context.getOrDefault("Ls", 50.0) : 50.0;
+            return calculateIllumination(distances, Ls);
         } else if ("display".equalsIgnoreCase(property)) {
             return calculateDisplayQoS(distances);
         }

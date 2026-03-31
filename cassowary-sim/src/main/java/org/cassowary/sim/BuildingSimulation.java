@@ -1,5 +1,7 @@
 package org.cassowary.sim;
 
+import org.cassowary.common.model.ContextData;
+import org.cassowary.core.CassowaryServer;
 import org.cassowary.sim.device.MockAppliance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,7 @@ public class BuildingSimulation {
     public static void main(String[] args) throws Exception {
         logger.info("Starting Cassowary Building Simulation...");
         
-        String brokerUrl = "tcp://localhost:61616";
+        String brokerUrl = "amqp://localhost:5672";
         
         // 1. Initialize Server and Simulated App
         CassowaryServer server = new CassowaryServer(brokerUrl, "http://localhost:8181");

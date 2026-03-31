@@ -17,9 +17,11 @@ public class Messaging4TransportDataListener {
 
     public void onDataChanged(ContextData data) {
         try {
-            String json = String.format("{\"deviceId\":\"%s\", \"type\":\"%s\", \"value\":%f}",
-                data.getDeviceId(), data.getType(), data.getValue());
-            publisher.publish(json);
+            if (publisher != null) {
+                String json = String.format("{\"deviceId\":\"%s\", \"type\":\"%s\", \"value\":%f}",
+                    data.getDeviceId(), data.getType(), data.getValue());
+                publisher.publish(json);
+            }
         } catch (Exception e) {
             logger.error("Error publishing data change", e);
         }
