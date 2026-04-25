@@ -16,32 +16,29 @@ Implementation of the Cassowary middleware for Context-Aware Smart Buildings wit
 - Maven 3.6+
 - Docker & Docker Compose (for running ActiveMQ)
 
-## Dependency Setup
+## Setup & Build
 
-### 1. ActiveMQ Broker (AMQP)
-To run the pub/sub messaging layer, start the broker using Docker:
+Both the ActiveMQ Broker (AMQP) and the OpenDaylight (ODL) Central Controller can be installed, and the project can be built, using the provided setup script. 
+
+To configure the environment and build the project, run:
 ```bash
-docker compose up -d
+chmod +x setup_env.sh
+./setup_env.sh
 ```
-The broker will be available at `amqp://localhost:5672`.
 
-### 2. OpenDaylight (ODL) Central Controller
-The project uses RESTCONF to interact with ODL. To run with a modern ODL (e.g., Chlorine):
-1. Download [ODL Karaf](https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/opendaylight/integration/karaf/0.17.3/karaf-0.17.3.tar.gz).
-2. Extract and run: `./bin/karaf`
-3. Install base features: `feature:install odl-restconf odl-mdsal-all`
+This script will automatically:
+1. Start the ActiveMQ broker via Docker Compose (`amqp://localhost:5672`).
+2. Download and extract OpenDaylight.
+3. Start the ODL controller in the background.
+4. Install the necessary RESTCONF and MD-SAL features.
+5. Build the Cassowary Maven project.
 
 ## Context-Aware Policy Engine
 The middleware implements a context-aware policy engine that handles jitter and external environment factors (e.g., natural light intensity `Ls`). It dynamically calculates comfort and energy efficiency targets based on tenant profiles.
 
-## How to Build & Run
+## How to Run
 
-### 1. Build the project
-```bash
-mvn clean install -DskipTests
-```
-
-### 2. Run the `BuildingSimulation`
+### Run the `BuildingSimulation`
 The simulation demonstrates Scenarios 1 and 2 from the research paper, covering tenant proximity and automatic actuation:
 ```bash
 mvn -pl cassowary-sim exec:java -Dexec.mainClass="org.cassowary.sim.BuildingSimulation"
