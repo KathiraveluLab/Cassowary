@@ -28,3 +28,6 @@ _bmad
 .codex
 .cursor
 **/target/
+
+# OpenDaylight Karaf distribution (downloaded by Docker build, do not commit)
+karaf-*/

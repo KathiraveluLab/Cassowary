@@ -4,7 +4,7 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 public class Publisher {
     private static final Logger logger = LoggerFactory.getLogger(Publisher.class);

@@ -12,9 +12,8 @@ Implementation of the Cassowary middleware for Context-Aware Smart Buildings wit
 
 ## Prerequisites
 
-- Java 17+ (Project built for Java 17)
-- Maven 3.6+
-- Docker & Docker Compose (for running ActiveMQ)
+- Java 17+ and Maven 3.6+ (for building Cassowary)
+- Docker & Docker Compose (for running ActiveMQ and OpenDaylight)
 
 ## Setup & Build
 
@@ -27,11 +26,15 @@ chmod +x setup_env.sh
 ```
 
 This script will automatically:
-1. Start the ActiveMQ broker via Docker Compose (`amqp://localhost:5672`).
-2. Download and extract OpenDaylight.
-3. Start the ODL controller in the background.
-4. Install the necessary RESTCONF and MD-SAL features.
-5. Build the Cassowary Maven project.
+1. Start the **ActiveMQ** broker and **OpenDaylight** controller as Docker containers.
+2. Wait for the ODL RESTCONF API to become available (`http://localhost:8181/restconf`).
+3. Install the necessary RESTCONF and MD-SAL features inside the ODL container.
+4. Build the Cassowary Maven project.
+
+To stop all services afterwards:
+```bash
+docker compose down
+```
 
 ## Context-Aware Policy Engine
 The middleware implements a context-aware policy engine that handles jitter and external environment factors (e.g., natural light intensity `Ls`). It dynamically calculates comfort and energy efficiency targets based on tenant profiles.

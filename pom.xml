@@ -20,6 +20,7 @@
         <activemq.version>6.2.4</activemq.version>
         <cloudsim.version>3.0.3</cloudsim.version>
         <slf4j.version>2.0.17</slf4j.version>
+        <jms.api.version>3.1.0</jms.api.version>
     </properties>
 
     <modules>
@@ -64,6 +65,11 @@
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
                 <version>${activemq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>${jms.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

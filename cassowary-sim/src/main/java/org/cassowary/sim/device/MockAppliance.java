@@ -4,8 +4,8 @@ import org.cassowary.network.mom.AmqpBrokerClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 
 public class MockAppliance {
     private static final Logger logger = LoggerFactory.getLogger(MockAppliance.class);
